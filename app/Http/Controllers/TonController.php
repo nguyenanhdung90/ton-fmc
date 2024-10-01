@@ -2,56 +2,33 @@
 
 namespace App\Http\Controllers;
 
+use App\Tons\WithdrawTonInterface;
+use App\Tons\WithdrawV4R1Interface;
 use Illuminate\Http\Request;
-use Http\Client\Common\HttpMethodsClient;
-use Http\Discovery\Psr18ClientDiscovery;
-use Http\Discovery\Psr17FactoryDiscovery;
-use Olifanton\Ton\Contracts\Wallets\TransferOptions;
-use Olifanton\Ton\Contracts\Wallets\V3\WalletV3Options;
-use Olifanton\Ton\Transports\Toncenter\ToncenterHttpV2Client;
-use Olifanton\Ton\Transports\Toncenter\ClientOptions;
-use Olifanton\Ton\Transports\Toncenter\ToncenterTransport;
-use Olifanton\Mnemonic\TonMnemonic;
-use Olifanton\Ton\Contracts\Wallets\V3\WalletV3R2;
-use Olifanton\Interop\Address;
-use Olifanton\Interop\Units;
-use Olifanton\Ton\Contracts\Wallets\Transfer;
 
 class TonController extends Controller
 {
-    public function transfer(Request $request)
-    {
-        $isMainNet = false;
-        $tonCenterApiKey = env("TON_API_KEY"); //0e7ac59d0a2c5142ecaeb08d0497efc3da085744c6382371ff5711e6cbac428f
+    private $withdrawTon;
+    private $depositTon;
 
-        // HTTP client initialization
-        $httpClient = new HttpMethodsClient(
-            Psr18ClientDiscovery::find(),
-            Psr17FactoryDiscovery::findRequestFactory(),
-            Psr17FactoryDiscovery::findStreamFactory(),
-        );
-        // Toncenter API client initialization
-        $tonCenter = new ToncenterHttpV2Client(
-            $httpClient,
-            new ClientOptions(
-                $isMainNet ? "https://toncenter.com/api/v2" : "https://testnet.toncenter.com/api/v2",
-                $tonCenterApiKey
-            )
-        );
-        $transport = new ToncenterTransport($tonCenter);
-        $words = explode(" ", trim(env("TON_MNEMONIC"))); //
-        $kp = TonMnemonic::mnemonicToKeyPair($words);
-        $wallet = new WalletV3R2(new WalletV3Options($kp->publicKey));
-        $extMsg = $wallet->createTransferMessage(
-            [
-                new Transfer(
-                    new Address("0QB2qumdPNrPUzgAAuTvG43NNBg45Cl4Bi_Gt81vE-EwF70k"),
-                    Units::toNano("0.003")
-                )
-            ],
-            new TransferOptions((int)$wallet->seqno($transport))
-        );
-        $transport->sendMessage($extMsg, $kp->secretKey);
-        return 'Success: ' . $wallet->getName();
+    public function __construct(WithdrawTonInterface $withdrawTon, WithdrawV4R1Interface $depositTon)
+    {
+        $this->withdrawTon = $withdrawTon;
+        $this->depositTon = $depositTon;
+    }
+
+
+    public function deposit(Request $request)
+    {
+        $mnemo = "perfect ribbon dentist picture truth plunge crawl able velvet trip elite oyster census clog annual open note violin peasant gym bubble file gallery survey";
+        return $this->withdrawTon->process($mnemo);
+    }
+
+    public function withdraw(Request $request)
+    {
+        $mnemo = 'perfect ribbon dentist picture truth plunge crawl able velvet trip elite oyster census clog annual open note violin peasant gym bubble file gallery survey';
+        $destinationAddress = '0QDt8nJuiKhM6kz99QjuB6XXVHZQZA350balZBMZoJiEDsVA';
+        $this->depositTon->process($mnemo, $destinationAddress, "0.003");
+        return 'success';
     }
 }

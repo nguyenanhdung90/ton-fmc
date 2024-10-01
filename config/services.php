@@ -30,5 +30,11 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
+    'ton' => [
+        'is_main_test' => env('IS_MAIN_TEST'),
+        'base_uri_test' => env('BASE_URI_TEST'),
+        'base_uri_main' => env('BASE_URI_MAIN'),
+        'api_key' => env('TON_API_KEY')
+    ]
 
 ];
