@@ -14,7 +14,7 @@ use Olifanton\Ton\Transports\Toncenter\ClientOptions;
 use Olifanton\Ton\Transports\Toncenter\ToncenterHttpV2Client;
 use Olifanton\Ton\Transports\Toncenter\ToncenterTransport;
 
-abstract class WithdrawAbstract
+abstract class WithdrawTonAbstract
 {
     abstract public function getWallet($pubicKey);
 

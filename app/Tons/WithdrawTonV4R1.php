@@ -6,7 +6,7 @@ use Olifanton\Ton\Contracts\Wallets\V4\WalletV4Options;
 use Olifanton\Ton\Contracts\Wallets\V4\WalletV4R2;
 
 
-class WithdrawV4R1 extends WithdrawAbstract implements WithdrawV4R1Interface
+class WithdrawTonV4R1 extends WithdrawTonAbstract implements WithdrawTonV4R1Interface
 {
     public function getWallet($pubicKey)
     {

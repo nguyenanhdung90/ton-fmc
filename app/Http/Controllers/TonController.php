@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Tons\WithdrawTonInterface;
-use App\Tons\WithdrawV4R1Interface;
+use App\Tons\DepositTonInterface;
+use App\Tons\WithdrawTonV4R1Interface;
 use Illuminate\Http\Request;
 
 class TonController extends Controller
 {
     private $withdrawTon;
+
     private $depositTon;
 
-    public function __construct(WithdrawTonInterface $withdrawTon, WithdrawV4R1Interface $depositTon)
+    public function __construct(WithdrawTonV4R1Interface $withdrawTon, DepositTonInterface $depositTon)
     {
         $this->withdrawTon = $withdrawTon;
         $this->depositTon = $depositTon;
@@ -20,8 +21,8 @@ class TonController extends Controller
 
     public function deposit(Request $request)
     {
-        $mnemo = "perfect ribbon dentist picture truth plunge crawl able velvet trip elite oyster census clog annual open note violin peasant gym bubble file gallery survey";
-        return $this->withdrawTon->process($mnemo);
+        $userId = 123;
+        return $this->withdrawTon->getBy($userId);
     }
 
     public function withdraw(Request $request)
