@@ -2,7 +2,7 @@
 
 namespace App\Tons;
 
-class DepositTon implements WithdrawTonInterface
+class DepositTon implements DepositTonInterface
 {
     public function getBy(int $userId)
     {

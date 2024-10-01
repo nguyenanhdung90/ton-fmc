@@ -22,14 +22,14 @@ class TonController extends Controller
     public function deposit(Request $request)
     {
         $userId = 123;
-        return $this->withdrawTon->getBy($userId);
+        return $this->depositTon->getBy($userId);
     }
 
     public function withdraw(Request $request)
     {
         $mnemo = 'perfect ribbon dentist picture truth plunge crawl able velvet trip elite oyster census clog annual open note violin peasant gym bubble file gallery survey';
         $destinationAddress = '0QDt8nJuiKhM6kz99QjuB6XXVHZQZA350balZBMZoJiEDsVA';
-        $this->depositTon->process($mnemo, $destinationAddress, "0.003");
+        $this->withdrawTon->process($mnemo, $destinationAddress, "0.003");
         return 'success';
     }
 }
