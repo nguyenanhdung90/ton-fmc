@@ -46,7 +46,7 @@ abstract class WithdrawTonAbstract
         $extMsg = $wallet->createTransferMessage(
             [
                 new Transfer(
-                    new Address('0QB2qumdPNrPUzgAAuTvG43NNBg45Cl4Bi_Gt81vE-EwF70k'),
+                    new Address($toAddress),
                     Units::toNano($unit)
                 )
             ],

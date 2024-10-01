@@ -6,6 +6,8 @@ use App\Tons\DepositTon;
 use App\Tons\DepositTonInterface;
 use App\Tons\WithdrawTonV4R1;
 use App\Tons\WithdrawTonV4R1Interface;
+use App\Tons\WithdrawUSDTV4R1;
+use App\Tons\WithdrawUSDTV4R1Interface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -20,6 +22,7 @@ class AppServiceProvider extends ServiceProvider
         $appServices = [
             DepositTonInterface::class => DepositTon::class,
             WithdrawTonV4R1Interface::class => WithdrawTonV4R1::class,
+            WithdrawUSDTV4R1Interface::class => WithdrawUSDTV4R1::class,
         ];
         foreach ($appServices as $key => $value) {
             $this->app->bind($key, $value);
