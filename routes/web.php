@@ -19,6 +19,6 @@ use Illuminate\Support\Facades\Route;
 //});
 
 Route::get('/', [TonController::class, 'transfer']);
-Route::get('/withdraw', [TonController::class, 'withdrawTON']);
+Route::get('/withdrawTON', [TonController::class, 'withdrawTON']);
 Route::get('/withdrawUSDT', [TonController::class, 'withdrawUSDT']);
 Route::get('/deposit', [TonController::class, 'deposit']);

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tons;
+namespace App\Tons\Withdraws;
 
 use Illuminate\Support\Facades\Log;
 use Olifanton\Interop\Address;
@@ -23,7 +23,7 @@ abstract class WithdrawUSDTAbstract extends WithdrawAbstract
             config('services.ton.root_usdt_test');
     }
 
-    public function process(string $mnemo, string $destAddress, string $usdtAmount, string $comment)
+    public function process(string $mnemo, string $destAddress, string $usdtAmount, string $comment = "")
     {
         $words = explode(" ", trim($mnemo));
         $kp = TonMnemonic::mnemonicToKeyPair($words);
@@ -43,20 +43,20 @@ abstract class WithdrawUSDTAbstract extends WithdrawAbstract
         Log::info('get state : ' . json_encode($state));
         $extMessage = $wallet->createTransferMessage([
             new Transfer(
-                dest: $usdtWalletAddress,
-                amount: Units::toNano("0.1"),
-                payload: $usdtWallet->createTransferBody(
-                new TransferJettonOptions(
-                    jettonAmount: Units::toNano($usdtAmount, Units::USDt),
-                    toAddress: new Address($destAddress),
-                    responseAddress: $walletAddress,
-                    forwardPayload: SnakeString::fromString($comment)->cell(true),
-                    forwardAmount: Units::toNano("0.0000001")
-                )
-            ),
-                sendMode: SendMode::IGNORE_ERRORS->combine(SendMode::PAY_GAS_SEPARATELY,
-            SendMode::CARRY_ALL_REMAINING_INCOMING_VALUE),
-            )],
+                    dest: $usdtWalletAddress,
+                    amount: Units::toNano("0.1"),
+                    payload: $usdtWallet->createTransferBody(
+                        new TransferJettonOptions(
+                            jettonAmount: Units::toNano($usdtAmount, Units::USDt),
+                            toAddress: new Address($destAddress),
+                            responseAddress: $walletAddress,
+                            forwardPayload: SnakeString::fromString($comment)->cell(true),
+                            forwardAmount: Units::toNano("0.0000001")
+                        )
+                    ),
+                    sendMode: SendMode::IGNORE_ERRORS->combine(SendMode::PAY_GAS_SEPARATELY,
+                                                               SendMode::CARRY_ALL_REMAINING_INCOMING_VALUE),
+                )],
             new TransferOptions(seqno: (int)$wallet->seqno($transport),)
         );
         $transport->sendMessage($extMessage, $kp->secretKey);

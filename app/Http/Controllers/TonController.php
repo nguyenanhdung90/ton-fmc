@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Tons\DepositTonInterface;
-use App\Tons\WithdrawTonV4R2Interface;
-use App\Tons\WithdrawUSDTV4R2Interface;
+use App\Tons\Deposits\DepositTonInterface;
+use App\Tons\Withdraws\WithdrawTonV4R2Interface;
+use App\Tons\Withdraws\WithdrawUSDTV4R2Interface;
 use Illuminate\Http\Request;
 
 class TonController extends Controller
@@ -25,7 +25,6 @@ class TonController extends Controller
         $this->withdrawUSDT = $withdrawUSDT;
     }
 
-
     public function deposit(Request $request)
     {
         $userId = 123;
@@ -36,7 +35,7 @@ class TonController extends Controller
     {
         $mnemo = 'perfect ribbon dentist picture truth plunge crawl able velvet trip elite oyster census clog annual open note violin peasant gym bubble file gallery survey';
         $destinationAddress = '0QB2qumdPNrPUzgAAuTvG43NNBg45Cl4Bi_Gt81vE-EwF70k';
-        $this->withdrawTon->process($mnemo, $destinationAddress, "0.01");
+        $this->withdrawTon->process($mnemo, $destinationAddress, "0.01", 'comment');
         return 'success';
     }
 

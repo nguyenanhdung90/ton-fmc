@@ -2,12 +2,12 @@
 
 namespace App\Providers;
 
-use App\Tons\DepositTon;
-use App\Tons\DepositTonInterface;
-use App\Tons\WithdrawTonV4R2;
-use App\Tons\WithdrawTonV4R2Interface;
-use App\Tons\WithdrawUSDTV4R2;
-use App\Tons\WithdrawUSDTV4R2Interface;
+use App\Tons\Deposits\DepositTon;
+use App\Tons\Deposits\DepositTonInterface;
+use App\Tons\Withdraws\WithdrawTonV4R2;
+use App\Tons\Withdraws\WithdrawTonV4R2Interface;
+use App\Tons\Withdraws\WithdrawUSDTV4R2;
+use App\Tons\Withdraws\WithdrawUSDTV4R2Interface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider

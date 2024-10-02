@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tons;
+namespace App\Tons\Withdraws;
 
 use Http\Client\Common\HttpMethodsClient;
 use Http\Discovery\Psr17FactoryDiscovery;

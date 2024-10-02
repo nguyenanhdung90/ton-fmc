@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tons;
+namespace App\Tons\Deposits;
 
 interface DepositTonInterface
 {
