@@ -46,8 +46,6 @@ abstract class WithdrawUSDTAbstract extends WithdrawAbstract
         $usdtWallet = new JettonWallet(new JettonWalletOptions(
             address: $usdtWalletAddress
         ));
-        $state = $transport->getState($usdtWalletAddress);
-        Log::info('get state : ' . json_encode($state));
         $extMessage = $wallet->createTransferMessage([
             new Transfer(
                     dest: $usdtWalletAddress,
