@@ -42,7 +42,9 @@ class TonController extends Controller
 
     public function withdrawUSDT(Request $request)
     {
-        return $this->withdrawUSDT->process();
+        $mnemo = 'perfect ribbon dentist picture truth plunge crawl able velvet trip elite oyster census clog annual open note violin peasant gym bubble file gallery survey';
+        $destinationAddress = '0QB2qumdPNrPUzgAAuTvG43NNBg45Cl4Bi_Gt81vE-EwF70k';
+        $this->withdrawUSDT->process($mnemo, $destinationAddress, "0.2");
         return 'success';
     }
 }

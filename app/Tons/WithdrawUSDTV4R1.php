@@ -10,6 +10,6 @@ class WithdrawUSDTV4R1 extends WithdrawUSDTAbstract implements WithdrawUSDTV4R1I
 {
     public function getWallet($pubicKey)
     {
-        return new WalletV4R2(new WalletV4Options($pubicKey));
+        return new WalletV4R2(new WalletV4Options(publicKey: $pubicKey));
     }
 }

@@ -31,10 +31,13 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
     'ton' => [
-        'is_main_test' => env('IS_MAIN_TEST'),
+        'is_main' => env('IS_MAIN'),
         'base_uri_test' => env('BASE_URI_TEST'),
         'base_uri_main' => env('BASE_URI_MAIN'),
-        'api_key' => env('TON_API_KEY')
+        'api_key_test' => env('TON_API_KEY_TEST'),
+        'api_key_main' => env('TON_API_KEY_MAIN'),
+        'root_usdt_test' => env('ROOT_USDT_TEST'),
+        'root_usdt_main' => env('ROOT_USDT_MAIN')
     ]
 
 ];
