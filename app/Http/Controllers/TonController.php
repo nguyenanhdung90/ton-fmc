@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Tons\DepositTonInterface;
 use App\Tons\WithdrawTonV4R1Interface;
-use App\Tons\WithdrawUSDTV4R1Interface;
+use App\Tons\WithdrawUSDTV4R2Interface;
 use Illuminate\Http\Request;
 
 class TonController extends Controller
@@ -18,7 +18,7 @@ class TonController extends Controller
     public function __construct(
         WithdrawTonV4R1Interface $withdrawTon,
         DepositTonInterface $depositTon,
-        WithdrawUSDTV4R1Interface $withdrawUSDT
+        WithdrawUSDTV4R2Interface $withdrawUSDT
     ) {
         $this->withdrawTon = $withdrawTon;
         $this->depositTon = $depositTon;
