@@ -6,13 +6,16 @@ use Illuminate\Support\Facades\Log;
 use Olifanton\Interop\Address;
 use Olifanton\Interop\Boc\SnakeString;
 use Olifanton\Interop\Units;
+use Olifanton\Mnemonic\Exceptions\TonMnemonicException;
 use Olifanton\Mnemonic\TonMnemonic;
+use Olifanton\Ton\Contracts\Exceptions\ContractException;
 use Olifanton\Ton\Contracts\Jetton\JettonMinter;
 use Olifanton\Ton\Contracts\Jetton\JettonWallet;
 use Olifanton\Ton\Contracts\Jetton\JettonWalletOptions;
 use Olifanton\Ton\Contracts\Jetton\TransferJettonOptions;
 use Olifanton\Ton\Contracts\Wallets\Transfer;
 use Olifanton\Ton\Contracts\Wallets\TransferOptions;
+use Olifanton\Ton\Exceptions\TransportException;
 use Olifanton\Ton\SendMode;
 
 abstract class WithdrawUSDTAbstract extends WithdrawAbstract
@@ -23,6 +26,11 @@ abstract class WithdrawUSDTAbstract extends WithdrawAbstract
             config('services.ton.root_usdt_test');
     }
 
+    /**
+     * @throws TransportException
+     * @throws TonMnemonicException
+     * @throws ContractException
+     */
     public function process(string $mnemo, string $destAddress, string $usdtAmount, string $comment = "")
     {
         $words = explode(" ", trim($mnemo));

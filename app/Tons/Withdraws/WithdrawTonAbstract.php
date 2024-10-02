@@ -4,13 +4,19 @@ namespace App\Tons\Withdraws;
 
 use Olifanton\Interop\Address;
 use Olifanton\Interop\Units;
+use Olifanton\Mnemonic\Exceptions\TonMnemonicException;
 use Olifanton\Mnemonic\TonMnemonic;
 use Olifanton\Ton\Contracts\Wallets\Transfer;
 use Olifanton\Ton\Contracts\Wallets\TransferOptions;
+use Olifanton\Ton\Exceptions\TransportException;
 
 
 abstract class WithdrawTonAbstract extends WithdrawAbstract
 {
+    /**
+     * @throws TransportException
+     * @throws TonMnemonicException
+     */
     public function process(string $mnemo, string $toAddress, string $tonAmount, string $comment = "")
     {
         $transport = $this->getTransport();

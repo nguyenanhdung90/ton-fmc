@@ -9,11 +9,11 @@ use Illuminate\Http\Request;
 
 class TonController extends Controller
 {
-    private $withdrawTon;
+    private WithdrawTonV4R2Interface $withdrawTon;
 
-    private $withdrawUSDT;
+    private WithdrawUSDTV4R2Interface $withdrawUSDT;
 
-    private $depositTon;
+    private DepositTonInterface $depositTon;
 
     public function __construct(
         WithdrawTonV4R2Interface $withdrawTon,
