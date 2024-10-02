@@ -31,10 +31,9 @@ abstract class WithdrawUSDTAbstract extends WithdrawAbstract
      * @throws TonMnemonicException
      * @throws ContractException
      */
-    public function process(string $mnemo, string $destAddress, string $usdtAmount, string $comment = "")
+    public function process(array $phrases, string $destAddress, string $usdtAmount, string $comment = "")
     {
-        $words = explode(" ", trim($mnemo));
-        $kp = TonMnemonic::mnemonicToKeyPair($words);
+        $kp = TonMnemonic::mnemonicToKeyPair($phrases);
         $wallet = $this->getWallet($kp->publicKey);
         /** @var Address $walletAddress */
         $walletAddress = $wallet->getAddress();

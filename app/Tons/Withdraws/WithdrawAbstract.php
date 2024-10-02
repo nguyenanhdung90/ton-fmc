@@ -2,6 +2,7 @@
 
 namespace App\Tons\Withdraws;
 
+use App\Models\TonPhrase;
 use Http\Client\Common\HttpMethodsClient;
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;

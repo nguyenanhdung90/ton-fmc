@@ -4,5 +4,5 @@ namespace App\Tons\Deposits;
 
 interface DepositTonInterface
 {
-    public function getBy(int $userId);
+    public function getBy(int $walletId): string;
 }

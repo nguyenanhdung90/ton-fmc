@@ -17,11 +17,10 @@ abstract class WithdrawTonAbstract extends WithdrawAbstract
      * @throws TransportException
      * @throws TonMnemonicException
      */
-    public function process(string $mnemo, string $toAddress, string $tonAmount, string $comment = "")
+    public function process(array $phrases, string $toAddress, string $tonAmount, string $comment = "")
     {
         $transport = $this->getTransport();
-        $words = explode(" ", trim($mnemo));
-        $kp = TonMnemonic::mnemonicToKeyPair($words);
+        $kp = TonMnemonic::mnemonicToKeyPair($phrases);
         $wallet = $this->getWallet($kp->publicKey);
         $extMsg = $wallet->createTransferMessage(
             [
