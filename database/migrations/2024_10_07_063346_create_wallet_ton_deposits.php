@@ -13,16 +13,18 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('wallet_ton_memos', function (Blueprint $table) {
+        Schema::create('wallet_ton_deposits', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('memo');
-            $table->enum('currency', ['TON', 'USDT'])->default('TON');
+            $table->enum('currency', ['TON', 'USDT']);
             $table->unsignedDecimal('amount', 20, 9)->default(0);
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')
+            $table->unsignedBigInteger('transaction_id');
+            $table->foreign('transaction_id')
                 ->references('id')
-                ->on('users');
-            $table->unique('memo', 'currency');
+                ->on('wallet_ton_transactions');
+            $table->foreign('memo')
+                ->references('memo')
+                ->on('wallet_ton_memos');
             $table->timestamps();
         });
     }
@@ -34,6 +36,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('ton_wallets');
+        Schema::dropIfExists('wallet_ton_deposits');
     }
 };
