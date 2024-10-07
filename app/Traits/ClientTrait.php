@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Log;
 
 trait ClientTrait
 {
-    public function get(string $uri): array
+    public function httpGet(string $uri): array
     {
         try {
             $client = new Client();

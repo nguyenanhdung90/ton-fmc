@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use App\Traits\ClientTrait;
 use Illuminate\Support\Facades\Log;
 
+
 class TonDepositTransactionCommand extends Command
 {
     use ClientTrait;
@@ -17,11 +18,26 @@ class TonDepositTransactionCommand extends Command
     protected $signature = 'ton:deposit';
 
     /**
-     * Track TON periodic transaction deposit of root wallet.
+     * get all transaction deposit of root wallet.
      *
      * @var string
      */
     protected $description = 'Track TON periodic transaction deposit of root wallet';
+
+    /**
+     * @var string
+     */
+    private string $baseUri;
+
+    /**
+     * TonDepositTransactionCommand constructor.
+     */
+    public function __construct()
+    {
+        $this->baseUri = config('services.ton.is_main') ? config('services.ton.base_uri_ton_api_main') :
+            config('services.ton.base_uri_ton_api_test');
+        parent::__construct();
+    }
 
     /**
      * Execute the console command.
@@ -30,31 +46,42 @@ class TonDepositTransactionCommand extends Command
      */
     public function handle(): int
     {
-        //sleep(1);
-        $from = floor(microtime(true) * 10000);
-        echo "from: " . $from . "\n";
-        $to = floor(microtime(true) * 10000);
-        echo "to  : " . $to . "\n";
-        $param = [
-            'address' => config('services.ton.root_ton_wallet'),
-            'limit' => 100,
-//            'to_lt' => 0,
-            'archival' => false,
-        ];
-        $query = http_build_query($param);
-        $baseUri = config('services.ton.is_main') ? config('services.ton.base_uri_main') :
-            config('services.ton.base_uri_test');
-        $uri = "$baseUri/getTransactions?$query";
-        //echo "\n";
-        //echo $uri;
-        $data = $this->get($uri);
-
-
-        $content = (json_decode($data['content'], true));
-        Log::info('lolo: ' . $data['content']);
-//        echo $data['content'];
-//        echo gettype(json_decode($data['content'], true));
-        //Log::info('handle: ' . getType($data['content'], true));
+        $params = ['limit' => 25];
+        $beforeLt = 0;
+        while (true) {
+            if ($beforeLt) {
+                $params['before_lt'] = $beforeLt;
+            }
+            $data = $this->getBatchBy($params);
+            if (empty($data)) {
+                // response error api ton
+                break;
+            }
+            $transactions = $data['transactions'];
+            echo "count: " . count($transactions) . "\n";
+            if (empty($transactions)) {
+                break;
+            }
+            $lastTransaction = end($transactions);
+            $beforeLt = $lastTransaction['lt'];
+            foreach ($transactions as $transaction) {
+                echo $transaction['lt'] . "-" . $transaction['hash'] . "\n";
+            }
+        }
+        echo "Finish job get all transaction";
         return Command::SUCCESS;
+    }
+
+    public function getBatchBy(array $params): array
+    {
+        $basePath = $this->baseUri . "v2/blockchain/accounts/" . config('services.ton.root_ton_wallet') .
+            "/transactions";
+        $query = http_build_query($params);
+        $uri = $basePath . '?' . $query;
+        $results = $this->httpGet($uri);
+        if ($results['status'] != 200) {
+            return [];
+        }
+        return json_decode($results['content'], true);
     }
 }
