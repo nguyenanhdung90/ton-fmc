@@ -66,7 +66,7 @@ class InsertDepositTransaction implements ShouldQueue
                 return;
             }
 
-            $trans['type'] = "DEPOSIT";
+            $trans['type'] = config('services.ton.deposit');
             $trans['amount'] = $trans['amount'] / (pow(10, $trans['decimals']));
             $trans['total_fees'] = $trans['total_fees'] / (pow(10, $trans['decimals']));
             $trans['created_at'] = Carbon::now();
