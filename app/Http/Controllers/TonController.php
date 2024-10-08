@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Tons\Deposits\DepositTonInterface;
 use App\Tons\Phrases\PhraseInterface;
 use App\Tons\Withdraws\WithdrawTonV4R2Interface;
 use App\Tons\Withdraws\WithdrawUSDTV4R2Interface;
@@ -14,25 +13,17 @@ class TonController extends Controller
 
     private WithdrawUSDTV4R2Interface $withdrawUSDT;
 
-    private DepositTonInterface $depositTon;
 
     private PhraseInterface $phrase;
 
     public function __construct(
         WithdrawTonV4R2Interface $withdrawTon,
-        DepositTonInterface $depositTon,
         WithdrawUSDTV4R2Interface $withdrawUSDT,
         PhraseInterface $phrase
     ) {
         $this->withdrawTon = $withdrawTon;
-        $this->depositTon = $depositTon;
         $this->withdrawUSDT = $withdrawUSDT;
         $this->phrase = $phrase;
-    }
-
-    public function deposit(Request $request): string
-    {
-        return $this->depositTon->getBy(1);
     }
 
     public function withdrawTON(Request $request): string
