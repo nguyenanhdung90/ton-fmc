@@ -59,9 +59,9 @@ class InsertDepositTransaction implements ShouldQueue
 
             $collectTransactionAttribute = new CollectTransactionAttribute();
             $hashLtFees = new CollectHashLtTotalFeesAttribute($collectTransactionAttribute);
-            $memo = new CollectMemoSenderAmountAttribute($hashLtFees);
-            $currency = new CollectCurrencyDecimalsAttribute($memo);
-            $trans = $currency->collect($this->data);
+            $memoSenderAmount = new CollectMemoSenderAmountAttribute($hashLtFees);
+            $currencyDecimal = new CollectCurrencyDecimalsAttribute($memoSenderAmount);
+            $trans = $currencyDecimal->collect($this->data);
             if (!in_array($trans['currency'], ['USDT', 'TON'])) {
                 return;
             }

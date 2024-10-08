@@ -11,14 +11,14 @@ class TonPeriodicDepositTransactionCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'command:name';
+    protected $signature = 'ton:periodic_deposit';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'get new transactions from wallet';
 
     /**
      * Execute the console command.
@@ -27,6 +27,9 @@ class TonPeriodicDepositTransactionCommand extends Command
      */
     public function handle()
     {
+        while (true) {
+
+        }
         return Command::SUCCESS;
     }
 }
