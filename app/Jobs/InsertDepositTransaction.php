@@ -7,6 +7,7 @@ use App\Tons\Transactions\CollectCurrencyDecimalsAttribute;
 use App\Tons\Transactions\CollectHashLtTotalFeesAttribute;
 use App\Tons\Transactions\CollectMemoSenderAmountAttribute;
 use App\Tons\Transactions\CollectTransactionAttribute;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -68,10 +69,20 @@ class InsertDepositTransaction implements ShouldQueue
             $trans['type'] = "DEPOSIT";
             $trans['amount'] = $trans['amount'] / (pow(10, $trans['decimals']));
             $trans['total_fees'] = $trans['total_fees'] / (pow(10, $trans['decimals']));
+            $trans['created_at'] = Carbon::now();
+            $trans['updated_at'] = Carbon::now();
             unset($trans['decimals']);
             DB::transaction(function () use ($trans) {
                 DB::table('wallet_ton_transactions')->insert($trans);
-                $id = DB::getPdo()->lastInsertId();
+                $tranId = DB::getPdo()->lastInsertId();
+                DB::table('wallet_ton_deposits')->insert([
+                    "memo" => $trans['to_memo'],
+                    "currency" => $trans['currency'],
+                    "amount" => $trans['amount'],
+                    "transaction_id" => $tranId,
+                    "created_at" => Carbon::now(),
+                    "updated_at" => Carbon::now(),
+                ]);
             }, 5);
         } catch (\Exception $e) {
             Log::error($e->getMessage());

@@ -14,10 +14,9 @@ class CollectCurrencyDecimalsAttribute extends CollectAttribute
     {
         $parentTrans = parent::collect($data);
         $decodedOpName = Arr::get($data, 'in_msg.decoded_op_name');
-
         if ($decodedOpName === config('services.ton.text_comment')) {
             $trans = [
-                'currency' => 'TON',
+                'currency' => config('services.ton.ton'),
                 'decimals' => 9,
             ];
             return array_merge($parentTrans, $trans);

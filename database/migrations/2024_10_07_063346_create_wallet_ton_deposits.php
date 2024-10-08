@@ -22,9 +22,6 @@ return new class extends Migration
             $table->foreign('transaction_id')
                 ->references('id')
                 ->on('wallet_ton_transactions');
-            $table->foreign('memo')
-                ->references('memo')
-                ->on('wallet_ton_memos');
             $table->timestamps();
         });
     }
