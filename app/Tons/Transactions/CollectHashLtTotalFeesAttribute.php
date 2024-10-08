@@ -4,7 +4,7 @@ namespace App\Tons\Transactions;
 
 use Illuminate\Support\Arr;
 
-class CollectHashLtTotalFeesaAttribute extends CollectAttribute
+class CollectHashLtTotalFeesAttribute extends CollectAttribute
 {
     public function collect(array $data): array
     {

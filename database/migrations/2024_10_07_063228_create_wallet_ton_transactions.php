@@ -16,20 +16,14 @@ return new class extends Migration
         Schema::create('wallet_ton_transactions', function (Blueprint $table) {
             $table->id();
             $table->string('from_address_wallet')->nullable();
-            $table->unsignedInteger('from_memo')->nullable();
+            $table->string('from_memo', 100)->nullable();
             $table->enum('type', ['DEPOSIT', 'WITHDRAW']);
-            $table->unsignedInteger('to_memo');
+            $table->string('to_memo', 100);
             $table->string('hash', '80')->index();
             $table->unsignedDecimal('amount', 20, 9)->default(0);
             $table->enum('currency', ['TON', 'USDT']);
-            $table->unsignedDecimal('total_fee', 20, 9)->default(0)->comment('currency = TON');
+            $table->unsignedDecimal('total_fees', 20, 9)->default(0)->comment('currency = TON');
             $table->unsignedBigInteger('lt');
-            $table->foreign('from_memo')
-                ->references('memo')
-                ->on('wallet_ton_memos');
-            $table->foreign('to_memo')
-                ->references('memo')
-                ->on('wallet_ton_memos');
             $table->timestamps();
         });
     }

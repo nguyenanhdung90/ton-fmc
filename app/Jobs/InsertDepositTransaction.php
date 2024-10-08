@@ -3,7 +3,9 @@
 namespace App\Jobs;
 
 use App\Models\WalletTonTransaction;
-use App\Tons\Transactions\CollectHashLtTotalFeesaAttribute;
+use App\Tons\Transactions\CollectCurrencyDecimalsAttribute;
+use App\Tons\Transactions\CollectHashLtTotalFeesAttribute;
+use App\Tons\Transactions\CollectMemoSenderAmountAttribute;
 use App\Tons\Transactions\CollectTransactionAttribute;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -39,20 +41,6 @@ class InsertDepositTransaction implements ShouldQueue
      */
     public function handle()
     {
-        $collectTransactionAttribute = new CollectTransactionAttribute();
-        $hash = new CollectHashLtTotalFeesaAttribute($collectTransactionAttribute);
-        $trans = $hash->collect($this->data);
-        Log::info($trans);
-        return;
-
-
-
-
-
-
-
-        Log::info($this->data);
-        DB::beginTransaction();
         try {
             $hash = Arr::get($this->data, 'hash');
             $countTransaction = WalletTonTransaction::where('hash', $hash)->count();
@@ -63,44 +51,30 @@ class InsertDepositTransaction implements ShouldQueue
                 // this is not received transaction
                 return;
             }
-            $lt = $this->data['lt'];
-            $totalFees = $this->data['total_fees'];
-
-            $currency = $memo = $source = '';
-            $amount = 0;
-            if ($this->data['in_msg']['decoded_op_name'] === 'jetton_notify') {
-                //$currency = Arr::get($this->data, 'in_msg.decoded_body.text'); // get api for currency
-                $memo = Arr::get($this->data, 'in_msg.decoded_body.forward_payload.value.value.text');
-                $source = Arr::get($this->data, 'in_msg.decoded_body.sender');
-                $amount = Arr::get($this->data, 'in_msg.decoded_body.amount');
-            } elseif ($this->data['in_msg']['decoded_op_name'] === 'text_comment') {
-                $memo = Arr::get($this->data, 'in_msg.decoded_body.text');
-                $currency = "TON";
-                $source = Arr::get($this->data, 'in_msg.source.address');
-                $amount = Arr::get($this->data, 'in_msg.value');
-            } else {
+            $decodedOpName = Arr::get($this->data, 'in_msg.decoded_op_name');
+            if (!in_array($decodedOpName, ['jetton_notify', 'text_comment'])) {
                 return;
             }
 
+            $collectTransactionAttribute = new CollectTransactionAttribute();
+            $hashLtFees = new CollectHashLtTotalFeesAttribute($collectTransactionAttribute);
+            $memo = new CollectMemoSenderAmountAttribute($hashLtFees);
+            $currency = new CollectCurrencyDecimalsAttribute($memo);
+            $trans = $currency->collect($this->data);
+            if (!in_array($trans['currency'], ['USDT', 'TON'])) {
+                return;
+            }
 
-            $walletTonTransaction = new WalletTonTransaction;
-            $walletTonTransaction->from_address_wallet = $source;
-            $walletTonTransaction->type = 'DEPOSIT';
-            $walletTonTransaction->currency = $currency;
-            $walletTonTransaction->to_memo = $memo;
-            $walletTonTransaction->hash = $hash;
-            $walletTonTransaction->lt = $lt;
-            $walletTonTransaction->amount = $amount;
-            $walletTonTransaction->total_fee = $totalFees;
-            DB::commit();
+            $trans['type'] = "DEPOSIT";
+            $trans['amount'] = $trans['amount'] / (pow(10, $trans['decimals']));
+            $trans['total_fees'] = $trans['total_fees'] / (pow(10, $trans['decimals']));
+            unset($trans['decimals']);
+            DB::transaction(function () use ($trans) {
+                DB::table('wallet_ton_transactions')->insert($trans);
+                $id = DB::getPdo()->lastInsertId();
+            }, 5);
         } catch (\Exception $e) {
-            DB::rollback();
-            echo $e->getMessage() . "\n";
+            Log::error($e->getMessage());
         }
-    }
-
-    private function getJettonsByEvent(string $event)
-    {
-
     }
 }

@@ -40,7 +40,13 @@ return [
         'api_key_main' => env('TON_API_KEY_MAIN'),
         'root_usdt_test' => env('ROOT_USDT_TEST'),
         'root_usdt_main' => env('ROOT_USDT_MAIN'),
-        'root_ton_wallet' => env('ROOT_TON_WALLET')
+        'root_ton_wallet' => env('ROOT_TON_WALLET'),
+        'usdt' => 'USDT',
+        'ton' => 'TON',
+        'jetton_notify' => 'jetton_notify',
+        'text_comment' => 'text_comment',
+        'deposit' => 'DEPOSIT',
+        'withdraw' => 'WITHDRAW',
     ]
 
 ];

@@ -10,6 +10,9 @@ class CollectTransactionAttribute implements CollectAttributeInterface
             'hash' => null,
             'lt' => null,
             'total_fees' => null,
+            'to_memo' => null,
+            'from_address_wallet' => null,
+            'amount' => null,
         ];
     }
 }

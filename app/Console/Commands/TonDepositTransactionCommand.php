@@ -59,19 +59,14 @@ class TonDepositTransactionCommand extends Command
                 break;
             }
             $transactions = $data['transactions'];
-            echo "count: " . count($transactions) . "\n";
             if (empty($transactions)) {
                 break;
             }
             $lastTransaction = end($transactions);
             $beforeLt = $lastTransaction['lt'];
             foreach ($transactions as $transaction) {
-                echo $transaction['lt'] . "-" . $transaction['hash'] . "\n";
-//                echo  "-" . gettype($transaction) . "\n";
                 InsertDepositTransaction::dispatch($transaction);
-                break;
             }
-            break;
         }
         echo "Finish job get all transaction";
         return Command::SUCCESS;
