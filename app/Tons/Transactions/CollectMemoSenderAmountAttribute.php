@@ -4,6 +4,7 @@ namespace App\Tons\Transactions;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
+use Olifanton\Interop\Address;
 
 class CollectMemoSenderAmountAttribute extends CollectAttribute
 {
@@ -21,9 +22,10 @@ class CollectMemoSenderAmountAttribute extends CollectAttribute
             $source = Arr::get($data, 'in_msg.source.address');
             $amount = Arr::get($data, 'in_msg.value');
         }
+       $address = new Address($source);
         $trans = [
             'to_memo' => $memo,
-            'from_address_wallet' => $source,
+            'from_address_wallet' => $address->toString(true, true, null, !config('services.tom.is_main')),
             'amount' => $amount,
         ];
         return array_merge($parentTrans, $trans);

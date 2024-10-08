@@ -21,6 +21,11 @@ class TonPeriodicDepositTransactionCommand extends Command
     protected $description = 'get new transactions from wallet';
 
     /**
+     * @var string
+     */
+    private string $baseUri;
+
+    /**
      * Execute the console command.
      *
      * @return int
@@ -28,6 +33,8 @@ class TonPeriodicDepositTransactionCommand extends Command
     public function handle()
     {
         while (true) {
+            echo "get new transactions ... \n";
+            sleep(1);
 
         }
         return Command::SUCCESS;
