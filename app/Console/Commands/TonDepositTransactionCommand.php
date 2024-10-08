@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\InsertDepositTransaction;
 use Illuminate\Console\Command;
 use App\Traits\ClientTrait;
 use Illuminate\Support\Facades\Log;
@@ -66,7 +67,11 @@ class TonDepositTransactionCommand extends Command
             $beforeLt = $lastTransaction['lt'];
             foreach ($transactions as $transaction) {
                 echo $transaction['lt'] . "-" . $transaction['hash'] . "\n";
+//                echo  "-" . gettype($transaction) . "\n";
+                InsertDepositTransaction::dispatch($transaction);
+                break;
             }
+            break;
         }
         echo "Finish job get all transaction";
         return Command::SUCCESS;

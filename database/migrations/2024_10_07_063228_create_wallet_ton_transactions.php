@@ -19,7 +19,7 @@ return new class extends Migration
             $table->unsignedInteger('from_memo')->nullable();
             $table->enum('type', ['DEPOSIT', 'WITHDRAW']);
             $table->unsignedInteger('to_memo');
-            $table->string('hash');
+            $table->string('hash', '80')->index();
             $table->unsignedDecimal('amount', 20, 9)->default(0);
             $table->enum('currency', ['TON', 'USDT']);
             $table->unsignedDecimal('total_fee', 20, 9)->default(0)->comment('currency = TON');
