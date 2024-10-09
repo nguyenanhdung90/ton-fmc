@@ -57,6 +57,12 @@ class TonDepositTransactionCommand extends Command
      */
     public function handle(): int
     {
+        $this->syncTonDeposit();
+        echo "Finish job.";
+        return Command::SUCCESS;
+    }
+
+    private function syncTonDeposit() {
         $params = [
             'limit' => self::LIMIT,
             'sort' => 'asc',
@@ -65,9 +71,8 @@ class TonDepositTransactionCommand extends Command
         ];
         $offset = $i = 0;
         while (true) {
-            echo $offset . "\n";
             $params['offset'] = $offset;
-            $data = $this->getBatchBy($params);
+            $data = $this->getTonBatchBy($params);
             if (empty($data)) {
                 // response error api ton
                 break;
@@ -82,16 +87,13 @@ class TonDepositTransactionCommand extends Command
             $offset = ($i + 1) * self::LIMIT;
             $i++;
         }
-        echo "Finish job get all transaction";
-        return Command::SUCCESS;
     }
 
-    public function getBatchBy(array $params): array
+    private function getTonBatchBy(array $params): array
     {
         $basePath = $this->baseUri . "api/v3/transactions";
         $query = http_build_query($params);
         $uri = $basePath . '?' . $query;
-        echo "uri: " . $uri;
         $results = $this->httpGet($uri);
         if ($results['status'] != 200) {
             return [];
