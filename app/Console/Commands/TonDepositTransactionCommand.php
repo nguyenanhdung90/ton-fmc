@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\InsertDepositTransaction;
+use App\Jobs\InsertDepositTonTransaction;
 use Illuminate\Console\Command;
 use App\Traits\ClientTrait;
 use Illuminate\Support\Facades\Log;
@@ -82,7 +82,7 @@ class TonDepositTransactionCommand extends Command
                 break;
             }
             foreach ($transactions as $transaction) {
-                InsertDepositTransaction::dispatch($transaction);
+                InsertDepositTonTransaction::dispatch($transaction);
             }
             $offset = ($i + 1) * self::LIMIT;
             $i++;

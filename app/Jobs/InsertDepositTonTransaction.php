@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Log;
 use App\Traits\ClientTrait;
 use App\Tons\Transactions\TransactionHelper;
 
-class InsertDepositTransaction implements ShouldQueue
+class InsertDepositTonTransaction implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, ClientTrait;
 
