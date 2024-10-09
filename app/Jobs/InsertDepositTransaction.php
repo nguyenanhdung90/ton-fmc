@@ -2,10 +2,8 @@
 
 namespace App\Jobs;
 
-use App\Models\WalletTonTransaction;
-use App\Tons\Transactions\CollectCurrencyDecimalsAttribute;
-use App\Tons\Transactions\CollectHashLtTotalFeesAttribute;
-use App\Tons\Transactions\CollectMemoSenderAmountAttribute;
+use App\Tons\Transactions\CollectHashLtTotalFeesTonAttribute;
+use App\Tons\Transactions\CollectMemoSenderAmountTonAttribute;
 use App\Tons\Transactions\CollectTransactionAttribute;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -18,6 +16,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Traits\ClientTrait;
+use App\Tons\Transactions\TransactionHelper;
 
 class InsertDepositTransaction implements ShouldQueue
 {
@@ -42,42 +41,45 @@ class InsertDepositTransaction implements ShouldQueue
      */
     public function handle()
     {
+        $this->syncAllTonDeposit();
+    }
+
+    private function syncAllTonDeposit()
+    {
         try {
-            $hash = Arr::get($this->data, 'hash');
-            $countTransaction = WalletTonTransaction::where('hash', $hash)->count();
-            if ($countTransaction) {
+            if (is_null(Arr::get($this->data, 'description.action'))) {
+                // this is not action
                 return;
             }
-            if (Arr::get($this->data, 'in_msg.msg_type') !== 'int_msg') {
+            if (count(Arr::get($this->data, 'out_msgs'))) {
                 // this is not received transaction
                 return;
             }
-            $decodedOpName = Arr::get($this->data, 'in_msg.decoded_op_name');
-            if (!in_array($decodedOpName, ['jetton_notify', 'text_comment'])) {
+            if (Arr::get($this->data, 'in_msg.source') === Arr::get($this->data, 'in_msg.destination')) {
+                // this is not from otherwallet
+                return;
+            }
+            $hash = TransactionHelper::toHash(Arr::get($this->data, 'hash'));
+            $countTransaction = DB::table('wallet_ton_transactions')->where('hash', $hash)->count();
+            if ($countTransaction) {
                 return;
             }
 
             $collectTransactionAttribute = new CollectTransactionAttribute();
-            $hashLtFees = new CollectHashLtTotalFeesAttribute($collectTransactionAttribute);
-            $memoSenderAmount = new CollectMemoSenderAmountAttribute($hashLtFees);
-            $currencyDecimal = new CollectCurrencyDecimalsAttribute($memoSenderAmount);
-            $trans = $currencyDecimal->collect($this->data);
-            if (!in_array($trans['currency'], ['USDT', 'TON'])) {
-                return;
-            }
-
+            $hashLtFees = new CollectHashLtTotalFeesTonAttribute($collectTransactionAttribute);
+            $memoSenderAmount = new CollectMemoSenderAmountTonAttribute($hashLtFees);
+            $trans = $memoSenderAmount->collect($this->data);
             $trans['type'] = config('services.ton.deposit');
-            $trans['amount'] = $trans['amount'] / (pow(10, $trans['decimals']));
-            $trans['total_fees'] = $trans['total_fees'] / (pow(10, $trans['decimals']));
+            $trans['currency'] = config('services.ton.ton');
             $trans['created_at'] = Carbon::now();
             $trans['updated_at'] = Carbon::now();
-            unset($trans['decimals']);
+
             DB::transaction(function () use ($trans) {
                 DB::table('wallet_ton_transactions')->insert($trans);
                 $tranId = DB::getPdo()->lastInsertId();
                 DB::table('wallet_ton_deposits')->insert([
                     "memo" => $trans['to_memo'],
-                    "currency" => $trans['currency'],
+                    "currency" => config('services.ton.usdt'),
                     "amount" => $trans['amount'],
                     "transaction_id" => $tranId,
                     "created_at" => Carbon::now(),

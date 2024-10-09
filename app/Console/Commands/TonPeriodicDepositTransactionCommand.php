@@ -31,8 +31,8 @@ class TonPeriodicDepositTransactionCommand extends Command
 
     public function __construct()
     {
-        $this->baseUri = config('services.ton.is_main') ? config('services.ton.base_uri_ton_api_main') :
-            config('services.ton.base_uri_ton_api_test');
+        $this->baseUri = config('services.ton.is_main') ? config('services.ton.base_uri_ton_center_main') :
+            config('services.ton.base_uri_ton_center_test');
         parent::__construct();
     }
 

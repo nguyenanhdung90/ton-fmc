@@ -10,7 +10,10 @@ use Illuminate\Support\Facades\Log;
 
 class TonDepositTransactionCommand extends Command
 {
+    const LIMIT = 10;
+
     use ClientTrait;
+
     /**
      * The name and signature of the console command.
      *
@@ -31,12 +34,19 @@ class TonDepositTransactionCommand extends Command
     private string $baseUri;
 
     /**
+     * @var string
+     */
+    private string $apiKey;
+
+    /**
      * TonDepositTransactionCommand constructor.
      */
     public function __construct()
     {
-        $this->baseUri = config('services.ton.is_main') ? config('services.ton.base_uri_ton_api_main') :
-            config('services.ton.base_uri_ton_api_test');
+        $this->baseUri = config('services.ton.is_main') ? config('services.ton.base_uri_ton_center_main') :
+            config('services.ton.base_uri_ton_center_test');
+        $this->apiKey =  config('services.ton.is_main') ? config('services.ton.api_key_main') :
+            config('services.ton.api_key_test');
         parent::__construct();
     }
 
@@ -47,12 +57,16 @@ class TonDepositTransactionCommand extends Command
      */
     public function handle(): int
     {
-        $params = ['limit' => 25];
-        $beforeLt = 0;
+        $params = [
+            'limit' => self::LIMIT,
+            'sort' => 'asc',
+            'account' => config('services.ton.root_ton_wallet'),
+            'api_key' => $this->apiKey,
+        ];
+        $offset = $i = 0;
         while (true) {
-            if ($beforeLt) {
-                $params['before_lt'] = $beforeLt;
-            }
+            echo $offset . "\n";
+            $params['offset'] = $offset;
             $data = $this->getBatchBy($params);
             if (empty($data)) {
                 // response error api ton
@@ -62,11 +76,11 @@ class TonDepositTransactionCommand extends Command
             if (empty($transactions)) {
                 break;
             }
-            $lastTransaction = end($transactions);
-            $beforeLt = $lastTransaction['lt'];
             foreach ($transactions as $transaction) {
                 InsertDepositTransaction::dispatch($transaction);
             }
+            $offset = ($i + 1) * self::LIMIT;
+            $i++;
         }
         echo "Finish job get all transaction";
         return Command::SUCCESS;
@@ -74,10 +88,10 @@ class TonDepositTransactionCommand extends Command
 
     public function getBatchBy(array $params): array
     {
-        $basePath = $this->baseUri . "v2/blockchain/accounts/" . config('services.ton.root_ton_wallet') .
-            "/transactions";
+        $basePath = $this->baseUri . "api/v3/transactions";
         $query = http_build_query($params);
         $uri = $basePath . '?' . $query;
+        echo "uri: " . $uri;
         $results = $this->httpGet($uri);
         if ($results['status'] != 200) {
             return [];
