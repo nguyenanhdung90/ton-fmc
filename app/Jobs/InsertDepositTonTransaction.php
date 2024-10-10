@@ -72,7 +72,7 @@ class InsertDepositTonTransaction implements ShouldQueue
                 $tranId = DB::getPdo()->lastInsertId();
                 DB::table('wallet_ton_deposits')->insert([
                     "memo" => $trans['to_memo'],
-                    "currency" => config('services.ton.usdt'),
+                    "currency" => $trans['currency'],
                     "amount" => $trans['amount'],
                     "transaction_id" => $tranId,
                     "created_at" => Carbon::now(),
