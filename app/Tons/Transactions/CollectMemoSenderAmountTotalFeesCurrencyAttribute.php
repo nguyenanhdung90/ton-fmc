@@ -33,11 +33,13 @@ class CollectMemoSenderAmountTotalFeesCurrencyAttribute extends CollectAttribute
             $jettonMaster = $httpClientV3->getJettonMaster([
                 'address' => $jettonWallet->getFriendlyMasterJetton(), 'limit' => 1, 'offset' => 0]);
             if (!$jettonMaster instanceof JettonMaster) {
-                throw new InvalidJettonMasterException("Invalid Jetton master.");
+                throw new InvalidJettonMasterException("Invalid Jetton master.",
+                    InvalidJettonMasterException::INVALID_JETTON);
             }
             $currency = $jettonMaster->getSymbol();
             if (!in_array($currency, config('services.ton.valid_currencies'))) {
-                throw new InvalidJettonMasterException("No support  jetton " . $currency);
+                throw new InvalidJettonMasterException("No support  jetton " . $currency,
+                    InvalidJettonMasterException::NO_SUPPORT_JETTON);
             }
             $trans['currency'] = $currency;
             $totalFess = (int)Arr::get($data, 'total_fees') / pow(10, (int)$jettonMaster->getDecimals());
@@ -79,11 +81,12 @@ class CollectMemoSenderAmountTotalFeesCurrencyAttribute extends CollectAttribute
         $slice = $cell->beginParse();
         $remainBit = count($slice->getRemainingBits());
         if ($remainBit < 32) {
-            throw new InvalidJettonException("Invalid Jetton.");
+            throw new InvalidJettonException("Invalid Jetton.", InvalidJettonException::INVALID_JETTON);
         }
         $opcode = Bytes::bytesToHexString($slice->loadBits(32));
         if ($opcode != config('services.ton.jetton_opcode')) {
-            throw new InvalidJettonException("Invalid Jetton notify");
+            throw new InvalidJettonException("Invalid Jetton notify",
+                InvalidJettonException::INVALID_JETTON_OPCODE);
         }
         $slice->skipBits(64);
         $amount = $slice->loadCoins();

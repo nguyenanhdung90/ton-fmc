@@ -6,8 +6,12 @@ use Exception;
 
 class InvalidJettonException extends Exception
 {
+    const INVALID_JETTON = '01';
+    const INVALID_JETTON_OPCODE = '02';
     public function render($request): \Illuminate\Http\JsonResponse
     {
-        return response()->json(["error" => true, "message" => $this->getMessage()]);
+        $code = (int)$this->getCode();
+        $messageCode = $code < 10 ? '0' . $code : $code;
+        return response()->json(["error" => true, "message" => $this->getMessage(), 'code' => $messageCode]);
     }
 }

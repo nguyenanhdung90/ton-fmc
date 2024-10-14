@@ -43,11 +43,7 @@ class TonController extends Controller
 
     public function withdrawOnlyMemo(Request $request): string
     {
-        try {
-            $this->withdrawMemoToMemo->transfer('https://t.me/testgiver_ton_bot', 'plus', 1, 'TON');
-            return 'Success';
-        } catch (\InvalidWithdrawMemoToMemoException $e) {
-            Log::error('Error: ' . $e->getMessage());
-        }
+        $this->withdrawMemoToMemo->transfer('https://t.me/testgiver_ton_bot', 'plus', 1, 'TON');
+        return 'Success';
     }
 }

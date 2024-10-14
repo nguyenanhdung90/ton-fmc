@@ -6,10 +6,11 @@ use Exception;
 
 class InvalidWithdrawMemoToMemoException extends Exception
 {
-    const NONE_EXIST_SOURCE_MEMO = '01';
-    const AMOUNT_SOURCE_MEMO_NOT_ENOUGH = '02';
-    const NONE_EXIST_DESTINATION_MEMO = '03';
-    const INVALID_AMOUNT = '04';
+    const NONE_EXIST_SOURCE_MEMO = '21';
+    const AMOUNT_SOURCE_MEMO_NOT_ENOUGH = '22';
+    const NONE_EXIST_DESTINATION_MEMO = '23';
+    const INVALID_AMOUNT = '24';
+
     public function render($request): \Illuminate\Http\JsonResponse
     {
         $code = (int)$this->getCode();
