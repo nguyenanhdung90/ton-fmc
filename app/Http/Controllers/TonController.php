@@ -22,7 +22,7 @@ class TonController extends Controller
 
     public function withdrawTON(Request $request): string
     {
-        $phrases = '';
+        $phrases = config('services.ton.ton_mnemonic');
         $destinationAddress = '0QB2qumdPNrPUzgAAuTvG43NNBg45Cl4Bi_Gt81vE-EwF70k';
         $this->withdrawTon->process($phrases, $destinationAddress, "0.01", 'comment');
         return 'success';
@@ -30,7 +30,7 @@ class TonController extends Controller
 
     public function withdrawUSDT(Request $request): string
     {
-        $phrases = '';
+        $phrases = config('services.ton.ton_mnemonic');
         $destinationAddress = '0QB2qumdPNrPUzgAAuTvG43NNBg45Cl4Bi_Gt81vE-EwF70k';
         $this->withdrawUSDT->process($phrases, $destinationAddress, "0.2", 'comment');
         return 'success';

@@ -16,8 +16,8 @@ abstract class WithdrawAbstract
 
     protected function getBaseUri()
     {
-        return config('services.ton.is_main') ? config('services.ton.base_uri_main') :
-            config('services.ton.base_uri_test');
+        return config('services.ton.is_main') ? config('services.ton.base_uri_ton_center_main') :
+            config('services.ton.base_uri_ton_center_test');
     }
 
     protected function getTonApiKey()
@@ -36,7 +36,7 @@ abstract class WithdrawAbstract
         $tonCenter = new ToncenterHttpV2Client(
             $httpClient,
             new ClientOptions(
-                $this->getBaseUri(),
+                $this->getBaseUri() . "api/v2",
                 $this->getTonApiKey()
             )
         );
