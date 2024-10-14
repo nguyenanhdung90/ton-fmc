@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Tons\HttpClient\TonCenterV3Client;
 use App\Tons\HttpClient\TonCenterV3ClientInterface;
+use App\Tons\Withdraws\WithdrawMemoToMemo;
+use App\Tons\Withdraws\WithdrawMemoToMemoInterface;
 use App\Tons\Withdraws\WithdrawTonV4R2;
 use App\Tons\Withdraws\WithdrawTonV4R2Interface;
 use App\Tons\Withdraws\WithdrawUSDTV4R2;
@@ -23,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
             WithdrawTonV4R2Interface::class => WithdrawTonV4R2::class,
             WithdrawUSDTV4R2Interface::class => WithdrawUSDTV4R2::class,
             TonCenterV3ClientInterface::class => TonCenterV3Client::class,
+            WithdrawMemoToMemoInterface::class => WithdrawMemoToMemo::class,
         ];
         foreach ($appServices as $key => $value) {
             $this->app->bind($key, $value);

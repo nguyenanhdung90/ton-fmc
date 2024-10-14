@@ -41,6 +41,7 @@ return [
         'root_ton_wallet' => env('ROOT_TON_WALLET'),
         'ton_mnemonic' => env('TON_MNEMONIC'),
         'ton' => 'TON',
+        'usdt' => 'USDT',
         'deposit' => 'DEPOSIT',
         'withdraw' => 'WITHDRAW',
         'jetton_opcode' => '7362d09c',

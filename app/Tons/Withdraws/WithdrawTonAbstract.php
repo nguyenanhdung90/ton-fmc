@@ -17,8 +17,9 @@ abstract class WithdrawTonAbstract extends WithdrawAbstract
      * @throws TransportException
      * @throws TonMnemonicException
      */
-    public function process(array $phrases, string $toAddress, string $tonAmount, string $comment = "")
+    public function process(string $toAddress, string $tonAmount, string $comment = "")
     {
+        $phrases = config('services.ton.ton_mnemonic');
         $transport = $this->getTransport();
         $kp = TonMnemonic::mnemonicToKeyPair($phrases);
         $wallet = $this->getWallet($kp->publicKey);

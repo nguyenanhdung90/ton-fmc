@@ -20,5 +20,5 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/withdrawTON', [TonController::class, 'withdrawTON']);
 Route::get('/withdrawUSDT', [TonController::class, 'withdrawUSDT']);
-Route::get('/getTransactionsV3', [TonController::class, 'getTransactionsV3']);
+Route::get('/withdrawOnlyMemo', [TonController::class, 'withdrawOnlyMemo']);
 

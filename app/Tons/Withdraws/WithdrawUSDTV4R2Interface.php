@@ -4,5 +4,5 @@ namespace App\Tons\Withdraws;
 
 interface WithdrawUSDTV4R2Interface
 {
-    public function process(array $phrases, string $destAddress, string $usdtAmount, string $comment = "");
+    public function process(string $destAddress, string $usdtAmount, string $comment = "");
 }

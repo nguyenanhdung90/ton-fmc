@@ -46,7 +46,6 @@ class InsertDepositTonTransaction implements ShouldQueue
                 // this is not received transaction
                 return;
             }
-            Log::info($this->data);
             $hash = TransactionHelper::toHash(Arr::get($this->data, 'hash'));
             $countTransaction = DB::table('wallet_ton_transactions')->where('hash', $hash)->count();
             if ($countTransaction) {
@@ -82,14 +81,6 @@ class InsertDepositTonTransaction implements ShouldQueue
                         $updateAmount = $walletMemo->amount + $trans['amount'];
                         DB::table('wallet_ton_memos')->where('id', $walletMemo->id)
                             ->update(['amount' => $updateAmount]);
-                    } else {
-                        DB::table('wallet_ton_memos')->insert([
-                            "memo" => $trans['to_memo'],
-                            "currency" => $trans['currency'],
-                            "amount" => $trans['amount'],
-                            "created_at" => Carbon::now(),
-                            "updated_at" => Carbon::now(),
-                        ]);
                     }
                 }
             }, 5);
