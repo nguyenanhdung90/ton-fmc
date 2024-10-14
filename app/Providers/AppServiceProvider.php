@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\Tons\Phrases\Phrase;
-use App\Tons\Phrases\PhraseInterface;
+use App\Tons\HttpClient\TonCenterV3Client;
+use App\Tons\HttpClient\TonCenterV3ClientInterface;
 use App\Tons\Withdraws\WithdrawTonV4R2;
 use App\Tons\Withdraws\WithdrawTonV4R2Interface;
 use App\Tons\Withdraws\WithdrawUSDTV4R2;
@@ -22,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
         $appServices = [
             WithdrawTonV4R2Interface::class => WithdrawTonV4R2::class,
             WithdrawUSDTV4R2Interface::class => WithdrawUSDTV4R2::class,
-            PhraseInterface::class => Phrase::class,
+            TonCenterV3ClientInterface::class => TonCenterV3Client::class,
         ];
         foreach ($appServices as $key => $value) {
             $this->app->bind($key, $value);

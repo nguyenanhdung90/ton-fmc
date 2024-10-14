@@ -2,9 +2,8 @@
 
 namespace App\Jobs;
 
-use App\Tons\Transactions\CollectCurrencyTypeTonAttribute;
-use App\Tons\Transactions\CollectHashLtTotalFeesTonAttribute;
-use App\Tons\Transactions\CollectMemoSenderAmountTonAttribute;
+use App\Tons\Transactions\CollectHashLtAttribute;
+use App\Tons\Transactions\CollectMemoSenderAmountTotalFeesCurrencyTypeAttribute;
 use App\Tons\Transactions\CollectTransactionAttribute;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -43,18 +42,11 @@ class InsertDepositTonTransaction implements ShouldQueue
     public function handle()
     {
         try {
-            if (is_null(Arr::get($this->data, 'description.action'))) {
-                // this is not action
-                return;
-            }
             if (count(Arr::get($this->data, 'out_msgs'))) {
                 // this is not received transaction
                 return;
             }
-            if (Arr::get($this->data, 'in_msg.source') === Arr::get($this->data, 'in_msg.destination')) {
-                // this is not from other wallet
-                return;
-            }
+
             $hash = TransactionHelper::toHash(Arr::get($this->data, 'hash'));
             $countTransaction = DB::table('wallet_ton_transactions')->where('hash', $hash)->count();
             if ($countTransaction) {
@@ -62,10 +54,11 @@ class InsertDepositTonTransaction implements ShouldQueue
             }
 
             $collectTransactionAttribute = new CollectTransactionAttribute();
-            $hashLtFees = new CollectHashLtTotalFeesTonAttribute($collectTransactionAttribute);
-            $memoSenderAmount = new CollectMemoSenderAmountTonAttribute($hashLtFees);
-            $currencyType = new CollectCurrencyTypeTonAttribute($memoSenderAmount);
-            $trans = $currencyType->collect($this->data);
+            $hashLtFees = new CollectHashLtAttribute($collectTransactionAttribute);
+            $memoSenderAmountTotalFeesCurrencyType = new CollectMemoSenderAmountTotalFeesCurrencyTypeAttribute($hashLtFees);
+            $trans = $memoSenderAmountTotalFeesCurrencyType->collect($this->data);
+            printf("inserting tran hash: %s currency: %s amount: %s \n", $trans['hash'], $trans['currency'],
+            $trans['amount']);
 
             DB::transaction(function () use ($trans) {
                 DB::table('wallet_ton_transactions')->insert($trans);
@@ -80,7 +73,7 @@ class InsertDepositTonTransaction implements ShouldQueue
                 ]);
             }, 5);
         } catch (\Exception $e) {
-            Log::error($e->getMessage());
+            Log::error("message: " . $this->data['hash'] . ' | ' . $e->getMessage());
         }
     }
 }

@@ -47,6 +47,7 @@ return [
         'text_comment' => 'text_comment',
         'deposit' => 'DEPOSIT',
         'withdraw' => 'WITHDRAW',
+        'jetton_opcode' => '7362d09c',
     ]
 
 ];

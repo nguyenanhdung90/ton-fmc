@@ -15,6 +15,8 @@ class CollectTransactionAttribute implements CollectAttributeInterface
             'to_memo' => null,
             'from_address_wallet' => null,
             'amount' => null,
+            'type' => null,
+            'currency' => null,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ];
