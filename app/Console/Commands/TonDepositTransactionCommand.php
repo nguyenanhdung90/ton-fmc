@@ -47,6 +47,7 @@ class TonDepositTransactionCommand extends Command
             $params['offset'] = $offset;
             $transactions = $httpClientV3->getTransactionsBy($params);
             if (empty($transactions)) {
+                echo "Have no transactions. \n";
                 break;
             }
             foreach ($transactions as $transaction) {

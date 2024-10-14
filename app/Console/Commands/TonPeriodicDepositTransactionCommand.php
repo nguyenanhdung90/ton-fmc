@@ -2,9 +2,12 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\InsertDepositTonTransaction;
 use App\Models\WalletTonTransaction;
+use App\Tons\HttpClient\TonCenterV3Client;
 use Illuminate\Console\Command;
 use App\Traits\ClientTrait;
+use Illuminate\Support\Facades\Log;
 
 class TonPeriodicDepositTransactionCommand extends Command
 {
@@ -15,7 +18,7 @@ class TonPeriodicDepositTransactionCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'ton:periodic_deposit';
+    protected $signature = 'ton:periodic_deposit {--limit=100}';
 
     /**
      * The console command description.
@@ -25,43 +28,33 @@ class TonPeriodicDepositTransactionCommand extends Command
     protected $description = 'get new transactions from wallet';
 
     /**
-     * @var string
-     */
-    private string $baseUri;
-
-    public function __construct()
-    {
-        $this->baseUri = config('services.ton.is_main') ? config('services.ton.base_uri_ton_center_main') :
-            config('services.ton.base_uri_ton_center_test');
-        parent::__construct();
-    }
-
-    /**
      * Execute the console command.
      *
      * @return int
      */
     public function handle()
     {
-        $params = ['limit' => 25, 'sort_order' => 'ASC'];
-        $afterLt = 0;
+        $limit = $this->option('limit');
+        $lastTransaction = WalletTonTransaction::orderBy('id', 'desc')->first();
+        $startLt = $lastTransaction ? $lastTransaction->lt : 0;
+        $params = ['limit' => $limit, 'sort_order' => 'asc', 'account' => config('services.ton.root_ton_wallet')];
+        $httpClientV3 = new TonCenterV3Client();
         while (true) {
-            echo "get new transactions ... \n";
-            $theLastWalletTransaction = WalletTonTransaction::orderBy('lt', "DESC")->first();
-            if (!$theLastWalletTransaction) {
-                $afterLt = $theLastWalletTransaction->lt;
+            printf("Get new transaction from lt: %s with limit: %s after 5s ... \n", $startLt, $limit);
+            if ($startLt) {
+                $params['start_lt'] = $startLt;
             }
-            if ($afterLt) {
-                $params['after_lt'] = $afterLt;
+            $transactions = $httpClientV3->getTransactionsBy($params);
+            if (!count($transactions)) {
+                echo "Have no transactions.";
+            } else {
+                foreach ($transactions as $transaction) {
+                    InsertDepositTonTransaction::dispatch($transaction);
+                }
+                $lastTransaction = end($transactions);
+                $startLt = $lastTransaction['lt'];
             }
-            $basePath = $this->baseUri . "v2/blockchain/accounts/" . config('services.ton.root_ton_wallet') .
-                "/transactions";
-            $query = http_build_query($params);
-            $results = $this->httpGet($basePath . '?' . $query);
-            if ($results['status'] != 200) {
-                continue;
-            }
-            sleep(1);
+            sleep(5);
         }
         return Command::SUCCESS;
     }

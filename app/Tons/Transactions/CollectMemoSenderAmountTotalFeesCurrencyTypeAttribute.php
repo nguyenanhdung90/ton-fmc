@@ -37,7 +37,11 @@ class CollectMemoSenderAmountTotalFeesCurrencyTypeAttribute extends CollectAttri
             if (!$jettonMaster instanceof JettonMaster) {
                 throw new InvalidJettonMasterException("Invalid Jetton master.");
             }
-            $trans['currency'] = $jettonMaster->getSymbol();
+            $currency = $jettonMaster->getSymbol();
+            if (!in_array($currency, config('services.ton.valid_currencies'))) {
+                throw new InvalidJettonMasterException("No support  jetton " . $currency);
+            }
+            $trans['currency'] = $currency;
             $totalFess = (int)Arr::get($data, 'total_fees') / pow(10, (int)$jettonMaster->getDecimals());
             $trans['total_fees'] = $totalFess;
             $bodyTrans = $this->parseJettonBody(Arr::get($data, 'in_msg.message_content.body'));

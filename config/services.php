@@ -44,6 +44,7 @@ return [
         'deposit' => 'DEPOSIT',
         'withdraw' => 'WITHDRAW',
         'jetton_opcode' => '7362d09c',
+        'valid_currencies' => ['TON', 'USDT'],
     ]
 
 ];
