@@ -7,7 +7,6 @@ use App\Models\WalletTonTransaction;
 use App\Tons\HttpClient\TonCenterV3Client;
 use Illuminate\Console\Command;
 use App\Traits\ClientTrait;
-use Illuminate\Support\Facades\Log;
 
 class TonPeriodicDepositTransactionCommand extends Command
 {
@@ -21,21 +20,21 @@ class TonPeriodicDepositTransactionCommand extends Command
     protected $signature = 'ton:periodic_deposit {--limit=100}';
 
     /**
-     * The console command description.
+     * Sync new transactions from root wallet.
      *
      * @var string
      */
-    protected $description = 'get new transactions from wallet';
+    protected $description = 'Sync new transactions from root wallet';
 
     /**
      * Execute the console command.
      *
      * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         $limit = $this->option('limit');
-        $lastTransaction = WalletTonTransaction::orderBy('id', 'desc')->first();
+        $lastTransaction = WalletTonTransaction::whereNotNull('from_address_wallet')->orderBy('id', 'desc')->first();
         $startLt = $lastTransaction ? $lastTransaction->lt : 0;
         $params = ['limit' => $limit, 'sort_order' => 'asc', 'account' => config('services.ton.root_ton_wallet')];
         $httpClientV3 = new TonCenterV3Client();

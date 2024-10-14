@@ -26,7 +26,7 @@ class TonDepositTransactionCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Track TON periodic transaction deposit of root wallet';
+    protected $description = 'get all transaction deposit of root wallet';
 
     /**
      * Execute the console command.
@@ -35,7 +35,7 @@ class TonDepositTransactionCommand extends Command
      */
     public function handle(): int
     {
-        echo "Start job \n";
+        echo "Start job ... \n";
         $params = [
             'limit' => self::LIMIT,
             'sort' => 'asc',
@@ -56,7 +56,7 @@ class TonDepositTransactionCommand extends Command
             $offset = ($i + 1) * self::LIMIT;
             $i++;
         }
-        echo "Finish job.";
+        echo "Finish job. \n";
         return Command::SUCCESS;
     }
 }

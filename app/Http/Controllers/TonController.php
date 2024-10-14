@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\InvalidWithdrawMemoToMemoException;
 use App\Tons\Withdraws\WithdrawMemoToMemoInterface;
 use App\Tons\Withdraws\WithdrawTonV4R2Interface;
 use App\Tons\Withdraws\WithdrawUSDTV4R2Interface;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class TonController extends Controller
 {
