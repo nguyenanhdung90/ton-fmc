@@ -12,6 +12,6 @@ class WalletTonMemo extends Model
     protected $table = 'wallet_ton_memos';
 
     protected $fillable = [
-        'memo', 'currency', 'amount', 'user_id'
+        'memo', 'currency', 'amount'
     ];
 }

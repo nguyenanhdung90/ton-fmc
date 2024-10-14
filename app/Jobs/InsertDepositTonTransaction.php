@@ -71,6 +71,25 @@ class InsertDepositTonTransaction implements ShouldQueue
                     "created_at" => Carbon::now(),
                     "updated_at" => Carbon::now(),
                 ]);
+                $walletMemo = DB::table('wallet_ton_memos')
+                    ->where('memo', $trans['to_memo'])
+                    ->where('currency', $trans['currency'])
+                    ->lockForUpdate()
+                    ->get(['id', 'memo', 'currency', 'amount'])
+                    ->first();
+                if ($walletMemo) {
+                    $updateAmount = $walletMemo->amount + $trans['amount'];
+                    DB::table('wallet_ton_memos')->where('id', $walletMemo->id)
+                        ->update(['amount' => $updateAmount]);
+                } else {
+                    DB::table('wallet_ton_memos')->insert([
+                        "memo" => $trans['to_memo'],
+                        "currency" => $trans['currency'],
+                        "amount" => $trans['amount'],
+                        "created_at" => Carbon::now(),
+                        "updated_at" => Carbon::now(),
+                    ]);
+                }
             }, 5);
         } catch (\Exception $e) {
             Log::error("message: " . $this->data['hash'] . ' | ' . $e->getMessage());

@@ -18,10 +18,6 @@ return new class extends Migration
             $table->string('memo', 20);
             $table->enum('currency', ['TON', 'USDT'])->default('TON');
             $table->unsignedDecimal('amount', 20, 9)->default(0);
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')
-                ->references('id')
-                ->on('users');
             $table->unique('memo', 'currency');
             $table->timestamps();
         });
