@@ -4,7 +4,7 @@ namespace App\Tons\Transactions;
 
 use Carbon\Carbon;
 
-class CollectTransactionAttribute implements CollectAttributeInterface
+class CollectTransactionDepositAttribute implements CollectAttributeInterface
 {
     public function collect(array $data): array
     {
@@ -15,7 +15,7 @@ class CollectTransactionAttribute implements CollectAttributeInterface
             'to_memo' => null,
             'from_address_wallet' => null,
             'amount' => null,
-            'type' => null,
+            'type' => config('services.ton.deposit'),
             'currency' => null,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),

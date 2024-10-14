@@ -3,8 +3,8 @@
 namespace App\Jobs;
 
 use App\Tons\Transactions\CollectHashLtAttribute;
-use App\Tons\Transactions\CollectMemoSenderAmountTotalFeesCurrencyTypeAttribute;
-use App\Tons\Transactions\CollectTransactionAttribute;
+use App\Tons\Transactions\CollectMemoSenderAmountTotalFeesCurrencyAttribute;
+use App\Tons\Transactions\CollectTransactionDepositAttribute;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -53,9 +53,9 @@ class InsertDepositTonTransaction implements ShouldQueue
                 return;
             }
 
-            $collectTransactionAttribute = new CollectTransactionAttribute();
+            $collectTransactionAttribute = new CollectTransactionDepositAttribute();
             $hashLtFees = new CollectHashLtAttribute($collectTransactionAttribute);
-            $memoSenderAmountTotalFeesCurrencyType = new CollectMemoSenderAmountTotalFeesCurrencyTypeAttribute($hashLtFees);
+            $memoSenderAmountTotalFeesCurrencyType = new CollectMemoSenderAmountTotalFeesCurrencyAttribute($hashLtFees);
             $trans = $memoSenderAmountTotalFeesCurrencyType->collect($this->data);
             printf("inserting tran hash: %s currency: %s amount: %s \n", $trans['hash'], $trans['currency'],
             $trans['amount']);

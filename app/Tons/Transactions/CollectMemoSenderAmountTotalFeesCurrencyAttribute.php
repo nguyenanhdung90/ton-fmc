@@ -15,7 +15,7 @@ use Olifanton\Interop\Boc\Cell;
 use Olifanton\Interop\Boc\Exceptions\CellException;
 use Olifanton\Interop\Bytes;
 
-class CollectMemoSenderAmountTotalFeesCurrencyTypeAttribute extends CollectAttribute
+class CollectMemoSenderAmountTotalFeesCurrencyAttribute extends CollectAttribute
 {
     use ClientTrait;
 
@@ -27,7 +27,6 @@ class CollectMemoSenderAmountTotalFeesCurrencyTypeAttribute extends CollectAttri
     public function collect(array $data): array
     {
         $parentTrans = parent::collect($data);
-        $trans = ['type' => config('services.ton.deposit')];
         $source = Arr::get($data, 'in_msg.source');
         $httpClientV3 = new TonCenterV3Client();
         $jettonWallet = $httpClientV3->getJettonWallet(['address' => $source, 'limit' => 1, 'offset' => 0]);
@@ -51,7 +50,7 @@ class CollectMemoSenderAmountTotalFeesCurrencyTypeAttribute extends CollectAttri
             return array_merge($parentTrans, $trans);
         }
 
-        $tonTrans = $trans + $this->getTonTran($data);
+        $tonTrans = $this->getTonTran($data);
         return array_merge($parentTrans, $tonTrans);
     }
 
