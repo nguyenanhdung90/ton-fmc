@@ -16,9 +16,9 @@ return new class extends Migration
         Schema::create('wallet_ton_transactions', function (Blueprint $table) {
             $table->id();
             $table->string('from_address_wallet')->nullable();
-            $table->string('from_memo', 100)->nullable();
+            $table->string('from_memo', 50)->nullable();
             $table->enum('type', ['DEPOSIT', 'WITHDRAW']);
-            $table->string('to_memo', 100)->nullable();
+            $table->string('to_memo', 50)->nullable();
             $table->string('hash', '80')->index();
             $table->unsignedDecimal('amount', 20, 9)->default(0);
             $table->enum('currency', ['TON', 'USDT']);

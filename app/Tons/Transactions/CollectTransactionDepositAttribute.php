@@ -15,6 +15,7 @@ class CollectTransactionDepositAttribute implements CollectAttributeInterface
             'to_memo' => null,
             'from_address_wallet' => null,
             'amount' => null,
+            'jetton_wallet' => null,
             'type' => config('services.ton.deposit'),
             'currency' => null,
             'created_at' => Carbon::now(),

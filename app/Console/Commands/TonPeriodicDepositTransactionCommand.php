@@ -45,7 +45,7 @@ class TonPeriodicDepositTransactionCommand extends Command
             }
             $transactions = $httpClientV3->getTransactionsBy($params);
             if (!count($transactions)) {
-                echo "Have no transactions.";
+                echo "Have no transactions. \n";
             } else {
                 foreach ($transactions as $transaction) {
                     InsertDepositTonTransaction::dispatch($transaction);

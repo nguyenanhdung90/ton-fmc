@@ -14,7 +14,7 @@ class TransactionHelper
         return bin2hex($ll);
     }
 
-    public static function toToken(float $amount, string $currency)
+    public static function toToken(float $amount, string $currency): float|int
     {
         if (!in_array($currency, config('services.ton.valid_currencies'))) {
             return 0;
@@ -29,6 +29,9 @@ class TransactionHelper
         return $unit / $decimals;
     }
 
+    /**
+     * @throws \Exception
+     */
     public static function uniqueTransactionHash(): string
     {
         $bytes = random_bytes(32);

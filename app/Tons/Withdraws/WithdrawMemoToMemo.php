@@ -24,11 +24,11 @@ class WithdrawMemoToMemo implements WithdrawMemoToMemoInterface
         }
         $amountToken = TransactionHelper::toToken($amount, $currency);
         if ($amountToken == 0) {
-            throw new InvalidWithdrawMemoToMemoException('Amount IS NOT ZERO',
+            throw new InvalidWithdrawMemoToMemoException('Amount is not zero',
                 InvalidWithdrawMemoToMemoException::INVALID_AMOUNT);
         }
         if ($amountToken > $sourceWalletTonMemo->amount) {
-            throw new InvalidWithdrawMemoToMemoException('Amount of from memo is not enough',
+            throw new InvalidWithdrawMemoToMemoException('Amount is not enough',
                 InvalidWithdrawMemoToMemoException::AMOUNT_SOURCE_MEMO_NOT_ENOUGH);
         }
         $updateSourceAmount = TransactionHelper::toToken($sourceWalletTonMemo->amount, $currency) - $amountToken;

@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Tons\Transactions\CollectHashLtAttribute;
+use App\Tons\Transactions\CollectJettonWalletAttribute;
 use App\Tons\Transactions\CollectMemoSenderAmountTotalFeesCurrencyAttribute;
 use App\Tons\Transactions\CollectTransactionDepositAttribute;
 use Carbon\Carbon;
@@ -52,28 +53,30 @@ class InsertDepositTonTransaction implements ShouldQueue
                 return;
             }
 
-            $collectTransactionAttribute = new CollectTransactionDepositAttribute();
-            $hashLtFees = new CollectHashLtAttribute($collectTransactionAttribute);
-            $memoSenderAmountTotalFeesCurrencyType = new CollectMemoSenderAmountTotalFeesCurrencyAttribute($hashLtFees);
-            $trans = $memoSenderAmountTotalFeesCurrencyType->collect($this->data);
+            $collectTransaction = new CollectTransactionDepositAttribute();
+            $collectHashLt = new CollectHashLtAttribute($collectTransaction);
+            $collectJettonWallet = new CollectJettonWalletAttribute($collectHashLt);
+            $collectMemoSenderAmountTotalFeesCurrency = new CollectMemoSenderAmountTotalFeesCurrencyAttribute
+            ($collectJettonWallet);
+            $trans = $collectMemoSenderAmountTotalFeesCurrency->collect($this->data);
             printf("inserting tran hash: %s currency: %s amount: %s \n", $trans['hash'], $trans['currency'],
-            $trans['amount']);
+                $trans['amount']);
 
             DB::transaction(function () use ($trans) {
                 DB::table('wallet_ton_transactions')->insert($trans);
                 $tranId = DB::getPdo()->lastInsertId();
                 DB::table('wallet_ton_deposits')->insert([
-                    "memo" => $trans['to_memo'],
-                    "currency" => $trans['currency'],
-                    "amount" => $trans['amount'],
+                    "memo" => Arr::get($trans, 'to_memo'),
+                    "currency" => Arr::get($trans, 'currency'),
+                    "amount" => Arr::get($trans, 'amount'),
                     "transaction_id" => $tranId,
                     "created_at" => Carbon::now(),
                     "updated_at" => Carbon::now(),
                 ]);
                 if (!empty($trans['to_memo'])) {
                     $walletMemo = DB::table('wallet_ton_memos')
-                        ->where('memo', $trans['to_memo'])
-                        ->where('currency', $trans['currency'])
+                        ->where('memo', Arr::get($trans, 'to_memo'))
+                        ->where('currency', Arr::get($trans, 'currency'))
                         ->lockForUpdate()
                         ->get(['id', 'memo', 'currency', 'amount'])
                         ->first();

@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('wallet_ton_memos', function (Blueprint $table) {
             $table->id();
-            $table->string('memo', 100);
+            $table->string('memo', 50);
             $table->enum('currency', ['TON', 'USDT'])->default('TON');
             $table->unsignedDecimal('amount', 20, 9)->default(0);
             $table->unique('memo', 'currency');
